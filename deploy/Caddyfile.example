@@ -1,0 +1,26 @@
+# Example reverse proxy for WA Tracker
+# Install Caddy on the host and point DNS to this machine.
+
+your-domain.example.com {
+        encode gzip
+
+        # Optional: restrict admin API by IP
+        # @admin {
+        #         path /presets* /histories* /send-* /whatsapp-status /tracking-session*
+        #         not remote_ip 203.0.113.10
+        # }
+        # respond @admin 403
+
+        reverse_proxy 127.0.0.1:3001
+
+        header {
+                Strict-Transport-Security "max-age=31536000; includeSubDomains"
+                X-Content-Type-Options nosniff
+                Referrer-Policy strict-origin-when-cross-origin
+                -Server
+        }
+
+        log {
+                output file /var/log/caddy/wa-tracker.log
+        }
+}
